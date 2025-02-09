@@ -1,0 +1,55 @@
+import timeit
+import nltk
+import spacy
+from nltk.chat.util import Chat, reflections
+
+# Download NLTK resources
+nltk.download('punkt' , quiet=True)
+
+# Load spaCy model
+nlp = spacy.load("en_core_web_sm")
+
+# Define pairs for NLTK Chat
+pairs = [
+    (r"hi|hello|hey", ["Hello! How can I assist you today?"]),
+    (r"good morning", ["good morning have a blessful and energitic day how are you doing"]),
+    (r"good afternoon", ["good afternoon hows your day going on "]),
+    (r"good evening", ["good evening any plans for the evening or just a casual routine"]),
+    (r"what is your name?", ["I am a chatbot created for demonstration purposes."]),
+    (r"how are you?", ["I'm just a program, but I'm here to help you!"]),
+    (r"i hope you are doing good", ["I'm doing great, thank you! How about you?"]),
+    (r"i am doing good", ["nice to know you are doing good,working on something intresting?"]),
+    (r"quit", ["Goodbye! Have a great day!"]),
+]
+
+# Create a chatbot instance
+chatbot = Chat(pairs, reflections)
+
+# Function to process user input using spaCy and NLTK
+def process_input(user_input):
+    doc = nlp(user_input)
+    tokens = [token.text for token in doc]
+    response = chatbot.respond(user_input.lower())
+    if response:
+        return response
+    return "I didn't quite understand that. Could you rephrase?"
+
+# Define test case
+def test_case():
+    test_inputs = [
+        "hi",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "what is your name?",
+        "how are you?",
+        "i hope you are doing good",
+        "quit"
+    ]
+    for input_text in test_inputs:
+        process_input(input_text)
+
+# Measure the time taken to execute the test case
+execution_time = timeit.timeit(test_case, number=100)
+
+print(f"Execution time for test case: {execution_time:.4f} seconds")
